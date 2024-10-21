@@ -1,0 +1,6 @@
+{
+  "log_level": 1,
+  "apiAuthID": "namehere",
+  "apiKey": "keyhere",
+  "api_url": "https://example.com"
+}
