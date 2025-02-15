@@ -47,7 +47,7 @@ def get_iso_time(epoch_timestamp: int):
     dt = datetime.datetime.fromtimestamp(epoch_timestamp, datetime.timezone.utc)
     return dt.isoformat(timespec='microseconds').replace('+00:00', 'Z')
 
-def create_meta_data(config_data, system_name: str, call_data: dict, audio_wav_path: str):
+def create_meta_data(config_data, system_name: str, call_data: dict):
     default_metadata = {
         "apiAuthID": "",
         "apiKey": "",
@@ -69,8 +69,8 @@ def create_meta_data(config_data, system_name: str, call_data: dict, audio_wav_p
     meta_data['recordedCall']['callDuration'] = call_data.get('call_length')
     return meta_data
 
-def upload_metadata(config_data, system_name: str, call_data: dict, audio_wav_path: str):
-    metadata = create_meta_data(config_data, system_name, call_data, audio_wav_path)
+def upload_metadata(config_data, system_name: str, call_data: dict, audio_path: str):
+    metadata = create_meta_data(config_data, system_name, call_data)
     module_logger.debug(metadata)
     metadata_url_path = config_data.get('api_url') + "/api/callupload"
     try:
@@ -87,14 +87,14 @@ def upload_metadata(config_data, system_name: str, call_data: dict, audio_wav_pa
         module_logger.error(f"Unexpected error while uploading call metadata: {e}")
         return None
 
-def upload_audio(config_data, call_id: str, audio_wav_path: str):
+def upload_audio(config_data, call_id: str, audio_path: str):
     audio_url_path = config_data.get('api_url') + "/api/callaudioupload/" + call_id
     module_logger.debug(audio_url_path)
     try:
-        file_size = os.path.getsize(audio_wav_path)
+        file_size = os.path.getsize(audio_path)
 
-        headers = {'Content-Type': 'audio/wav', 'Content-Length': str(file_size)}
-        with open(audio_wav_path, 'rb') as audio_file:
+        headers = {'Content-Type': 'audio/mpeg', 'Content-Length': str(file_size)}
+        with open(audio_path, 'rb') as audio_file:
             r = requests.post(audio_url_path, headers=headers, data=audio_file)
 
         if r.status_code == 200:

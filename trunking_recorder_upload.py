@@ -38,7 +38,7 @@ except Exception as e:
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process Arguments.')
     parser.add_argument("-s", "--system_short_name", type=str, help="System Short Name.")
-    parser.add_argument("-a", "--audio_wav_path", type=str, help="Path to WAV.")
+    parser.add_argument("-a", "--audio_path", type=str, help="Path to WAV.")
     args = parser.parse_args()
     return args
 
@@ -47,11 +47,13 @@ def main():
     logger.info("Starting Trunking Recorder Upload")
     args = parse_arguments()
 
-    call_data = load_call_json(args.audio_wav_path.replace(".wav", ".json"))
+    audio_path = args.audio_path.replace(".wav", ".mp3")
+
+    call_data = load_call_json(audio_path.replace(".mp3", ".json"))
     if not call_data:
         exit(1)
 
-    process_tr_call(config_data, args.system_short_name, call_data, args.audio_wav_path)
+    process_tr_call(config_data, args.system_short_name, call_data, audio_path)
 
 if __name__ == '__main__':
     main()
